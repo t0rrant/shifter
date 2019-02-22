@@ -96,7 +96,6 @@ export PATH="/usr/bin:/bin"
 LDFLAGS="-L${SPRT_PREFIX}/lib -L${SPRT_PREFIX}/lib64" CC="${SPRT_PREFIX}/bin/musl-gcc" ./configure --without-pam "--with-ssl-dir=${SPRT_PREFIX}" --enable-static --with-zlib="${SPRT_PREFIX}" --prefix="${INST_PREFIX}" --host=$(uname -m)
 make
 make install "DESTDIR=${PREFIX}"
-cd "${builddir}"
 
 cd "${PREFIX}"
 tar cf "${origdir}/udiRoot_dep.tar" .
