@@ -93,39 +93,10 @@ cd dropbear
 ## the image is not infected with all kinds of silly paths (sshd sets PATH to
 ## very nearly the path it was built with)
 export PATH="/usr/bin:/bin"
-LDFLAGS="-L${SPRT_PREFIX}/lib -L${SPRT_PREFIX}/lib64" CC="${SPRT_PREFIX}/bin/musl-gcc" ./configure --without-pam "--with-ssl-dir=${SPRT_PREFIX}" --enable-static --disable-shared --with-zlib="${SPRT_PREFIX}" --prefix="${INST_PREFIX}" --host=$(uname -m)
+LDFLAGS="-L${SPRT_PREFIX}/lib -L${SPRT_PREFIX}/lib64" CC="${SPRT_PREFIX}/bin/musl-gcc" ./configure --without-pam "--with-ssl-dir=${SPRT_PREFIX}" --enable-static --with-zlib="${SPRT_PREFIX}" --prefix="${INST_PREFIX}" --host=$(uname -m)
 make
 make install "DESTDIR=${PREFIX}"
 cd "${builddir}"
-
-cat <<EOF > "${PREFIX}${INST_PREFIX}/etc/sshd_config"
-Port 1204
-StrictModes yes
-PermitRootLogin no
-AuthorizedKeysFile ${INST_PREFIX}/etc/user_auth_keys
-IgnoreUserKnownHosts yes
-PasswordAuthentication no
-ChallengeResponseAuthentication no
-X11Forwarding yes
-PermitUserEnvironment no
-UseDNS no
-Subsystem sftp ${INST_PREFIX}/libexec/sftp-server
-AcceptEnv PBS_HOSTFILE
-AcceptEnv SLURM_JOB_NODELIST
-AcceptEnv SLURM_NODELIST
-AcceptEnv BASIL_RESERVATION_ID
-## The following is typically a bad practice -- but is ok here since all our security is
-## to protect the system from the container not the other way around.  Allowing all variables
-## through should be safe within the clustered environment.
-AcceptEnv *
-AllowUsers ToBeReplaced
-EOF
-cat <<EOF > ${PREFIX}${INST_PREFIX}/etc/ssh_config
-Host *
-  StrictHostKeyChecking no
-  Port 1204
-  IdentityFile ~/.udiRoot/id_rsa.key
-EOF
 
 cd "${PREFIX}"
 tar cf "${origdir}/udiRoot_dep.tar" .
