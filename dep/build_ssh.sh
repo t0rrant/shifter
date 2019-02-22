@@ -8,10 +8,10 @@ unset LDFLAGS
 INST_PREFIX=${INST_PREFIX:-/opt/udiImage}
 SPRT_PREFIX=$( mktemp -d )
 PREFIX=$( mktemp -d )
-MUSL_VERSION=1.1.8
-LIBRESSL_VERSION=2.1.6
-ZLIB_VERSION=1.2.8
-OPENSSH_VERSION=6.8p1
+MUSL_VERSION=1.1.21
+LIBRESSL_VERSION=2.8.3
+ZLIB_VERSION=1.2.11
+DROPBEAR_VERSION=2018.76
 
 origdir=$( pwd )
 mkdir -p build
@@ -41,11 +41,11 @@ fi
 if [[ ! -e "zlib-${ZLIB_VERSION}.tar.gz" ]]; then
     curl -o "zlib-${ZLIB_VERSION}.tar.gz" "http://zlib.net/fossils/zlib-${ZLIB_VERSION}.tar.gz"
 fi
-if [[ ! -e "openssh-${OPENSSH_VERSION}.tar.gz" && -n "$DEPTAR_DIR" && -e "$DEPTAR_DIR/openssh-${OPENSSH_VERSION}.tar.gz" ]]; then
-    cp "$DEPTAR_DIR/openssh-${OPENSSH_VERSION}.tar.gz" .
+if [[ ! -e "dropbear-${DROPBEAR_VERSION}.tar.bz2" && -n "$DEPTAR_DIR" && -e "$DEPTAR_DIR/dropbear-${DROPBEAR_VERSION}.tar.bz2" ]]; then
+    cp "$DEPTAR_DIR/dropbear-${DROPBEAR_VERSION}.tar.bz2" .
 fi
-if [[ ! -e "openssh-${OPENSSH_VERSION}.tar.gz" ]]; then
-    curl -o "openssh-${OPENSSH_VERSION}.tar.gz" "http://mirrors.sonic.net/pub/OpenBSD/OpenSSH/portable/openssh-${OPENSSH_VERSION}.tar.gz"
+if [[ ! -e "dropbear-${DROPBEAR_VERSION}.tar.bz2" ]]; then
+    curl -o "dropbear-${DROPBEAR_VERSION}.tar.bz2" "https://matt.ucc.asn.au/dropbear/releases/dropbear-${DROPBEAR_VERSION}.tar.bz2"
 fi
 
 mkdir -p musl
@@ -85,9 +85,9 @@ make
 make install
 
 cd "${builddir}"
-mkdir -p openssh
-tar xf "openssh-${OPENSSH_VERSION}.tar.gz" -C openssh --strip-components=1
-cd openssh
+mkdir -p dropbear
+tar xjf "dropbear-${DROPBEAR_VERSION}.tar.bz2" -C dropbear --strip-components=1
+cd dropbear
 
 ## it is important to change PATH here so that the default PATH when ssh'd into
 ## the image is not infected with all kinds of silly paths (sshd sets PATH to
