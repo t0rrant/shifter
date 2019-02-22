@@ -72,7 +72,7 @@ cd "${builddir}"
 mkdir -p libressl
 tar xf "libressl-${LIBRESSL_VERSION}.tar.gz" -C libressl --strip-components=1
 cd libressl
-CC="${SPRT_PREFIX}/bin/musl-gcc" ./configure "--prefix=${SPRT_PREFIX}" --enable-static --disable-shared
+CC="${SPRT_PREFIX}/bin/musl-gcc" ./configure "--prefix=${SPRT_PREFIX}" --enable-static --disable-shared --host=$(uname -m)
 make
 make install
 
